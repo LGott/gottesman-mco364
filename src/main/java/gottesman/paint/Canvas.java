@@ -18,7 +18,7 @@ public class Canvas extends JPanel {
 	public Canvas() {
 
 		this.buffer = new BufferedImage(800, 800, BufferedImage.TYPE_INT_ARGB);
-		tool = new OvalTool();
+		tool = new RectangleTool();
 
 		this.addMouseListener(new MouseListener() {
 
