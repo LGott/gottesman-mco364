@@ -13,21 +13,17 @@ import javax.swing.JPanel;
 
 public class Canvas extends JPanel {
 
-	private static final long serialVersionUID = 1L;
-
 	private Stack<BufferedImage> undo;
 	private Stack<BufferedImage> redo;
-	private BufferedImage buffer;
 	private Tool tool;
-	Color color = Color.black;
+	private PaintProperties properties;
 
-	public Canvas() {
+	public Canvas(final PaintProperties properties) {
 
-		this.buffer = new BufferedImage(800, 800, BufferedImage.TYPE_INT_ARGB);
-		tool = new PencilTool(color);
-		undo = new Stack<BufferedImage>();
-		redo = new Stack<BufferedImage>();
-
+		this.properties = properties;
+		this.undo = new Stack<BufferedImage>();
+		this.redo = new Stack<BufferedImage>();
+		this.tool = new PencilTool(properties);
 		addMouseListener(new MouseListener() {
 
 			public void mouseClicked(MouseEvent e) {
@@ -41,15 +37,15 @@ public class Canvas extends JPanel {
 
 			public void mousePressed(MouseEvent e) {
 
-				undo.push(copy(buffer));
+				undo.push(copy(properties.getImage()));
 
-				tool.mousePressed(buffer.getGraphics(), e.getX(), e.getY());
+				tool.mousePressed(properties.getImage().getGraphics(), e.getX(), e.getY());
 				repaint();
 			}
 
 			public void mouseReleased(MouseEvent e) {
 
-				tool.mouseReleased(buffer.getGraphics(), e.getX(), e.getY());
+				tool.mouseReleased(properties.getImage().getGraphics(), e.getX(), e.getY());
 				repaint();
 			}
 
@@ -58,17 +54,13 @@ public class Canvas extends JPanel {
 		this.addMouseMotionListener(new MouseMotionListener() {
 
 			public void mouseDragged(MouseEvent e) {
-				tool.mouseDragged(buffer.getGraphics(), e.getX(), e.getY());
+				tool.mouseDragged(properties.getImage().getGraphics(), e.getX(), e.getY());
 				repaint();
 			}
 
 			public void mouseMoved(MouseEvent e) {
 			}
 		});
-	}
-
-	public void setColor(Color color) {
-		tool.setColor(color);
 	}
 
 	public Tool getTool() {
@@ -81,21 +73,29 @@ public class Canvas extends JPanel {
 
 	}
 
+	public void setColor(Color newColor) {
+		properties.setColor(newColor);
+	}
+
 	public void undoAndRedo(String ur) {
 		if (ur.equals("undo") && (!(undo.isEmpty()))) {
-			redo.push(copy(buffer));
-			buffer = undo.pop();
+			redo.push(copy(properties.getImage()));
+			properties.setImage(undo.pop());
 			repaint();
 		}
 		if (ur.equals("redo") && (!(redo.isEmpty()))) {
-			undo.push(copy(buffer));
-			buffer = redo.pop();
+			undo.push(copy(properties.getImage()));
+			properties.setImage(redo.pop());
 			repaint();
 		}
 	}
 
 	public BufferedImage getBuffer() {
-		return this.buffer;
+		return this.properties.getImage();
+	}
+
+	public PaintProperties getProperties() {
+		return this.properties;
 	}
 
 	public BufferedImage copy(BufferedImage img) {
@@ -110,7 +110,7 @@ public class Canvas extends JPanel {
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		g.drawImage(buffer, 0, 0, null);
+		g.drawImage(properties.getImage(), 0, 0, null);
 		tool.drawPreview(g);
 	}
 }

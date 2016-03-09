@@ -1,9 +1,8 @@
 package gottesman.paint;
 
-import java.awt.Color;
 import java.awt.Graphics;
 
-public class OvalTool implements Tool {
+public class OvalTool extends Tool {
 
 	private int x1;
 	private int y1;
@@ -11,14 +10,14 @@ public class OvalTool implements Tool {
 	private int y2;
 	private int width;
 	private int height;
-	private Color color;
 
-	public OvalTool(Color color) {
-		this.color = color;
+	public OvalTool(PaintProperties properties) {
+		super(properties);
+
 	}
 
 	public void mousePressed(Graphics g, int x, int y) {
-		g.setColor(color);
+		g.setColor(properties.getColor());
 		g.fillOval(x, y, 1, 1);
 		x1 = x;
 		y1 = y;
@@ -27,7 +26,7 @@ public class OvalTool implements Tool {
 	}
 
 	public void mouseReleased(Graphics g, int x, int y) {
-		g.setColor(color);
+		g.setColor(properties.getColor());
 		width = x - x1;
 		height = y - y1;
 		g.drawOval(x1, y1, width, height);
@@ -40,15 +39,10 @@ public class OvalTool implements Tool {
 	}
 
 	public void drawPreview(Graphics g) {
-		g.setColor(color);
+		g.setColor(properties.getColor());
 		width = x2 - x1;
 		height = y2 - y1;
 		g.drawOval(x1, y1, width, height);
-
-	}
-
-	public void setColor(Color color) {
-		this.color = color;
 
 	}
 

@@ -16,99 +16,52 @@ public class PaintFrame extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 
-	private JButton ovalTool;
-	private JButton rectTool;
-	private JButton paintBucket;
-	private JButton lineTool;
-	private JButton pencilTool;
 	private JButton colorChooser;
 	private JButton undo;
 	private JButton redo;
-
-	private Canvas canvas;
-	private Tool tool;
-	private Color color;
+	private Color color = Color.black;
 
 	public PaintFrame() {
 
 		setTitle("PaintFrame");
-		setSize(800, 800);
+		setSize(1000, 800);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		Container container = getContentPane();
 		container.setLayout(new BorderLayout());
 
-		JPanel buttons = new JPanel();
-		buttons.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 20));
+		final PaintProperties properties = new PaintProperties();
 
-		container.add(buttons, BorderLayout.NORTH);
-		pencilTool = new JButton("Pencil");
-		rectTool = new JButton("Box");
-		ovalTool = new JButton("Oval");
-		lineTool = new JButton("Line");
-		paintBucket = new JButton("Bucket");
-		colorChooser = new JButton("Choose Color");
-		color = Color.BLACK;
-		undo = new JButton("Undo");
-		redo = new JButton("Redo");
-		buttons.add(rectTool);
-		buttons.add(pencilTool);
-		buttons.add(lineTool);
-		buttons.add(paintBucket);
-		buttons.add(ovalTool);
-		buttons.add(colorChooser);
-		buttons.add(undo);
-		buttons.add(redo);
-
-		canvas = new Canvas();
+		final Canvas canvas = new Canvas(properties);
 		container.add(canvas, BorderLayout.CENTER);
 
-		pencilTool.addActionListener(new ActionListener() {
+		JPanel panel = new JPanel();
+		panel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 20));
 
-			public void actionPerformed(ActionEvent arg0) {
+		this.colorChooser = new JButton("Choose Color");
+		this.undo = new JButton("Undo");
+		this.redo = new JButton("Redo");
 
-				tool = new PencilTool(color);
-				canvas.setTool(tool);
+		ActionListener listener = new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				ToolButton button = (ToolButton) event.getSource();
+				canvas.setTool(button.getTool());
 			}
+		};
 
-		});
+		ToolButton[] buttons = new ToolButton[] { new ToolButton(new PencilTool(properties), "/pencil.png"),
+				new ToolButton(new LineTool(properties), "/line.png"),
+				new ToolButton(new RectangleTool(properties), "/square.png"),
+				new ToolButton(new OvalTool(properties), "/circle.png"),
+				new ToolButton(new PaintBucket(properties), "/bucket.png") };
 
-		ovalTool.addActionListener(new ActionListener() {
+		for (ToolButton button : buttons) {
+			button.addActionListener(listener);
+			panel.add(button);
+		}
 
-			public void actionPerformed(ActionEvent arg0) {
-
-				tool = new OvalTool(color);
-				canvas.setTool(tool);
-			}
-
-		});
-
-		lineTool.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent arg0) {
-
-				tool = new LineTool(color);
-				canvas.setTool(tool);
-			}
-
-		});
-
-		rectTool.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent arg0) {
-				tool = new RectangleTool(color);
-				canvas.setTool(tool);
-			}
-
-		});
-		paintBucket.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent arg0) {
-				tool = new PaintBucket(color, canvas.getBuffer());
-				canvas.setTool(tool);
-			}
-
-		});
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 20));
 
 		colorChooser.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -121,6 +74,7 @@ public class PaintFrame extends JFrame {
 				}
 			}
 		});
+		buttonPanel.add(colorChooser);
 
 		undo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -128,6 +82,7 @@ public class PaintFrame extends JFrame {
 				canvas.undoAndRedo("undo");
 			}
 		});
+		buttonPanel.add(undo);
 
 		redo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -135,7 +90,10 @@ public class PaintFrame extends JFrame {
 				canvas.undoAndRedo("redo");
 			}
 		});
+		buttonPanel.add(redo);
 
+		container.add(buttonPanel, BorderLayout.SOUTH);
+		container.add(panel, BorderLayout.NORTH);
 		setVisible(true);
 
 	}
