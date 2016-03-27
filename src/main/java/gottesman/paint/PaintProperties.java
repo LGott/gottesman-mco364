@@ -3,6 +3,9 @@ package gottesman.paint;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 
+import javax.inject.Singleton;
+
+@Singleton
 public class PaintProperties {
 
 	private int width;
@@ -13,11 +16,11 @@ public class PaintProperties {
 	private boolean fill;
 
 	public PaintProperties() {
-		image = new BufferedImage(1000, 800, BufferedImage.TYPE_INT_ARGB);
+		image = new BufferedImage(800, 700, BufferedImage.TYPE_INT_ARGB);
 		width = image.getWidth();
 		height = image.getHeight();
 		color = Color.BLACK;
-		weight = 0;
+		weight = 1;
 		fill = false;
 	}
 

@@ -11,6 +11,10 @@ import java.util.Stack;
 
 import javax.swing.JPanel;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
+@Singleton
 public class Canvas extends JPanel {
 
 	private Stack<BufferedImage> undo;
@@ -18,6 +22,7 @@ public class Canvas extends JPanel {
 	private Tool tool;
 	private PaintProperties properties;
 
+	@Inject
 	public Canvas(final PaintProperties properties) {
 
 		this.properties = properties;
