@@ -18,7 +18,7 @@ import javax.swing.JPanel;
 public class PaintToolbar extends Container {
 
 	@Inject
-	public PaintToolbar(final Canvas canvas, PaintProperties properties) {
+	public PaintToolbar(final Canvas canvas, ToolButton buttons[]) {
 
 		setLayout(new BorderLayout());
 		Dimension dim = new Dimension(800, 250);
@@ -30,17 +30,12 @@ public class PaintToolbar extends Container {
 		botPanel.setLayout(new FlowLayout());
 
 		ActionListener listener = new ActionListener() {
+
 			public void actionPerformed(ActionEvent event) {
 				ToolButton button = (ToolButton) event.getSource();
 				canvas.setTool(button.getTool());
 			}
 		};
-
-		ToolButton[] buttons = new ToolButton[] { new ToolButton(new PencilTool(properties), "/pencil.png"),
-				new ToolButton(new LineTool(properties), "/line.png"),
-				new ToolButton(new RectangleTool(properties), "/square.png"),
-				new ToolButton(new OvalTool(properties), "/circle.png"),
-				new ToolButton(new PaintBucket(properties), "/bucket.png") };
 
 		for (ToolButton button : buttons) {
 			button.addActionListener(listener);
